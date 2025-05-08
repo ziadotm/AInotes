@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AI-Notes</string>
+    <string name="btn_record">Démarrer lenregistrement</string>
+    <string name="transcription_hint">Transcription :</string>
+    <string name="summary_hint">Résumé :</string>
+
+</resources>
