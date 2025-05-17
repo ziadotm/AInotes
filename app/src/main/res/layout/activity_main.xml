@@ -1,32 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp">
 
-    <!-- Bouton pour démarrer/arrêter l'enregistrement -->
-    <Button
-        android:id="@+id/btnRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Démarrer l'enregistrement"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Zone pour afficher la transcription -->
     <TextView
         android:id="@+id/tvTranscription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Transcription :"
         android:textSize="16sp"
-        android:padding="8dp"
-        android:background="#E0E0E0"
-        android:layout_marginBottom="16dp" />
+        android:padding="8dp" />
 
-    <!-- Zone pour afficher le résumé -->
     <TextView
         android:id="@+id/tvSummary"
         android:layout_width="match_parent"
@@ -34,5 +20,12 @@
         android:text="Résumé :"
         android:textSize="16sp"
         android:padding="8dp"
-        android:background="#E0E0E0" />
+        android:layout_marginTop="12dp" />
+
+    <Button
+        android:id="@+id/btnRecord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Démarrer l'enregistrement"
+        android:layout_marginTop="24dp" />
 </LinearLayout>

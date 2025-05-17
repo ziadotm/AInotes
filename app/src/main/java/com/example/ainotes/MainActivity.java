@@ -11,11 +11,31 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import android.view.View;
+import android.widget.Toast;
+import android.widget.TextView;
+import android.widget.Button;
+
+
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
+import org.json.JSONException;
+
+import android.util.Log;
+import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,10 +43,15 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 1;
+
     private SpeechRecognizer speechRecognizer;
     private Intent speechRecognizerIntent;
-    private TextView tvTranscription, tvSummary;
+
+    private TextView tvTranscription;
+    private TextView tvSummary;
     private Button btnRecord;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +80,29 @@ public class MainActivity extends AppCompatActivity {
                 stopListening();
             }
         });
+
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btnRecord.getText().toString().equals("Démarrer l'enregistrement")) {
+                    btnRecord.setText("Arrêter l'enregistrement");
+                    startListening();
+                } else {
+                    btnRecord.setText("Démarrer l'enregistrement");
+                    stopListening();
+
+                    String transcribedText = tvTranscription.getText().toString();
+                    sendTextToBackend(transcribedText);
+                }
+            }
+        });
+
+        tvSummary = findViewById(R.id.tvSummary);
+        tvTranscription = findViewById(R.id.tvTranscription);
+        btnRecord = findViewById(R.id.btnRecord);
+
+
+
     }
 
     private void initializeSpeechRecognizer() {
@@ -147,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -154,4 +203,48 @@ public class MainActivity extends AppCompatActivity {
             speechRecognizer.destroy(); // Libérer les ressources
         }
     }
+
+
+    private void sendTextToBackend(String text) {
+        String url = "http://192.168.11.100:8080/api/resume";; // Utilise 10.0.2.2 pour Android Emulator
+
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("text", text);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Erreur JSON input", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonBody,
+                response -> {
+                    try {
+                        String summary = response.getString("summary");
+                        tvSummary.setText(summary); // ✅ Affichage du résumé
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Erreur JSON (résumé)", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    Log.e("API_ERROR", "Erreur Volley : " + error.toString());
+                    Toast.makeText(this, "Erreur de connexion au serveur", Toast.LENGTH_SHORT).show();
+                }
+        );
+
+        queue.add(request);
+    }
+
+
+
+
+
+
+
 }
